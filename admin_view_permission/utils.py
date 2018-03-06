@@ -20,10 +20,12 @@ def django_version():
 
 
 def get_model_name(model):
-    if django_version() == DjangoVersion.DJANGO_18:
+    try:
+        if django_version() == DjangoVersion.DJANGO_18:
+            raise AttributeError
+        return model._meta.label
+    except AttributeError:
         return '%s.%s' % (model._meta.app_label, model._meta.object_name)
-
-    return model._meta.label
 
 
 def get_all_permissions(opts, ctype=None):

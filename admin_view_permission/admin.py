@@ -379,6 +379,8 @@ class AdminViewPermissionAdminSite(admin.AdminSite):
         """
         SETTINGS_MODELS = getattr(
             settings, 'ADMIN_VIEW_PERMISSION_MODELS', None)
+        SETTINGS_MODELS_EXCLUDE = getattr(
+            settings, 'ADMIN_VIEW_PERMISSION_MODELS_EXCLUDE', None) or []
 
         models = model_or_iterable
         if not isinstance(model_or_iterable, (tuple, list)):
@@ -386,21 +388,18 @@ class AdminViewPermissionAdminSite(admin.AdminSite):
 
         is_user_model = settings.AUTH_USER_MODEL in [
             get_model_name(i) for i in models]
+        is_all = SETTINGS_MODELS is None
+        is_empty_models = SETTINGS_MODELS is not None and len(
+            SETTINGS_MODELS) == 0
 
-        if SETTINGS_MODELS or (SETTINGS_MODELS is not None and len(
-                SETTINGS_MODELS) == 0):
-            for model in models:
-                model_name = get_model_name(model)
-                if model_name in SETTINGS_MODELS:
-                    admin_class = self._get_admin_class(
-                        admin_class, is_user_model)
+        for model in models:
+            model_name = get_model_name(model)
+            if (is_all or model_name in SETTINGS_MODELS) and \
+                    model_name not in SETTINGS_MODELS_EXCLUDE:
+                admin_class = self._get_admin_class(admin_class, is_user_model)
 
-                super(AdminViewPermissionAdminSite, self).register(
-                    [model], admin_class, **options)
-        else:
-            admin_class = self._get_admin_class(admin_class, is_user_model)
             super(AdminViewPermissionAdminSite, self).register(
-                model_or_iterable, admin_class, **options)
+                [model], admin_class, **options)
 
     def _build_app_dict(self, request, label=None):
         """

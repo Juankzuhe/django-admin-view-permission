@@ -13,14 +13,18 @@ from .utils import get_model_name
 def update_permissions(sender, app_config, verbosity, apps=global_apps,
                        **kwargs):
     settings_models = getattr(settings, 'ADMIN_VIEW_PERMISSION_MODELS', None)
+    settings_models_exclude = \
+        getattr(settings, 'ADMIN_VIEW_PERMISSION_MODELS_EXCLUDE', None) or []
+    is_empty_models = settings_models is not None and len(settings_models) == 0
 
     # TODO: Maybe look at the registry not in all models
     for app in apps.get_app_configs():
         for model in app.get_models():
+            model_name = get_model_name(model)
+            if model_name in settings_models_exclude:
+                continue
             view_permission = 'view_%s' % model._meta.model_name
-            if settings_models or (settings_models is not None and len(
-                    settings_models) == 0):
-                model_name = get_model_name(model)
+            if settings_models or is_empty_models:
                 if model_name in settings_models and view_permission not in \
                         [perm[0] for perm in model._meta.permissions]:
                     model._meta.permissions += (

@@ -1,8 +1,8 @@
 Configuration
 =============
 
-The admin view permission provides one setting that you can add in your project's
-settings module to customize its behavior.
+The admin view permission provides two settings that you can add in your
+project's settings module to customize its behavior.
 
 ADMIN_VIEW_PERMISSION_MODELS
 ----------------------------
@@ -16,6 +16,21 @@ Example
 ::
 
      ADMIN_VIEW_PERMISSION_MODELS = [
+         'auth.User',
+         ...
+     ]
+
+ADMIN_VIEW_PERMISSION_MODELS_EXCLUDE
+----------------------------
+
+This setting defines which models you don't want to be added the view
+permission.
+
+Example
+~~~~~~~
+::
+
+     ADMIN_VIEW_PERMISSION_MODELS_EXCLUDE = [
          'auth.User',
          ...
      ]

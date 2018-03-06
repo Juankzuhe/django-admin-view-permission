@@ -49,16 +49,34 @@ and finally run ``python manage.py migrate``.
 Configuration
 -------------
 
-This app provides a setting::
+ADMIN_VIEW_PERMISSION_MODELS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This setting defines which models you want to be added the view permission. If
+you don't specify this setting then the view permission will be applied to all
+the models.
+
+::
 
     ADMIN_VIEW_PERMISSION_MODELS = [
         'auth.User',
         ...
     ]
 
-in which you can provide which models you want to be added the view permission.
-If you don't specify this setting then the view permission will be applied to
-all the models.
+
+
+ADMIN_VIEW_PERMISSION_MODELS_EXCLUDE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This setting defines which models you don't want to be added the view
+permission.
+
+::
+
+     ADMIN_VIEW_PERMISSION_MODELS_EXCLUDE = [
+         'auth.User',
+         ...
+     ]
 
 Uninstall
 ---------
