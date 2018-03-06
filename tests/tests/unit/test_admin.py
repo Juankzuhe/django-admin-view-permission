@@ -1772,7 +1772,7 @@ class TestAdminViewPermissionAdminSite(SimpleTestCase):
     def test_register__8(self):
         self.admin_site.register(TestModel1)
         modeladmin5 = type(str('TestModelAdmin5'), (admin.ModelAdmin,), {})
-        self.admin_site.register(TestModel5)
+        self.admin_site.register(TestModel5, modeladmin5)
         assert isinstance(self.admin_site._registry[TestModel1],
                           AdminViewPermissionModelAdmin)
         assert isinstance(self.admin_site._registry[TestModel5],
