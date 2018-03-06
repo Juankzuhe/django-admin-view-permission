@@ -389,8 +389,6 @@ class AdminViewPermissionAdminSite(admin.AdminSite):
         is_user_model = settings.AUTH_USER_MODEL in [
             get_model_name(i) for i in models]
         is_all = SETTINGS_MODELS is None
-        is_empty_models = SETTINGS_MODELS is not None and len(
-            SETTINGS_MODELS) == 0
 
         for model in models:
             model_name = get_model_name(model)

@@ -1779,4 +1779,3 @@ class TestAdminViewPermissionAdminSite(SimpleTestCase):
                           AdminViewPermissionModelAdmin)
         assert isinstance(self.admin_site._registry[TestModel5],
                           modeladmin5)
-
