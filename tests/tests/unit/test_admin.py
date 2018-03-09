@@ -1718,7 +1718,7 @@ class TestAdminViewPermissionUserAdmin(TestCase):
         admin_site.register(get_user_model(), UserAdmin)
         self.view = admin_site._registry[get_user_model()]
         self.url = lambda pk: \
-            reverse('admin:auth_user_password_change', kwargs={'id': pk})
+            reverse('admin:auth_user_password_change', args=(pk,))
 
     def test_user_change_password(self):
         simple_user = create_simple_user('simple_user')
