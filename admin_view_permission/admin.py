@@ -332,8 +332,6 @@ class AdminViewPermissionUserAdmin(AdminViewPermissionModelAdmin):
         password_field = None
         if 'password' in form.base_fields:
             password_field = form.base_fields['password']
-        elif 'password2' in form.base_fields:
-            password_field = form.base_fields['password2']
         if password_field:
             if not self._has_change_only_permission(request):
                 password_field.help_text = _(
