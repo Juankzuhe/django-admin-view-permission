@@ -91,3 +91,16 @@ class TestAdminViewPermissionConfig(TestCase):
             self.model3._meta.permissions,
             ((u'copy_apptestmodel3', u'Can copy apptestmodel3'), )
         )
+
+    @override_settings(
+        ADMIN_VIEW_PERMISSION_MODELS=None,
+        ADMIN_VIEW_PERMISSION_MODELS_EXCLUDE=['test_app.AppTestModel2'],
+    )
+    def test_ready__with_exclude(self):
+        self._trigger_signal()
+        self.assertEqual(self.model1._meta.permissions,
+                         [('view_apptestmodel1', 'Can view apptestmodel1'), ])
+        self.assertEqual(self.model2._meta.permissions, [])
+        self.assertEqual(self.model3._meta.permissions,
+                         ((u'copy_apptestmodel3', u'Can copy apptestmodel3'),
+                          (u'view_apptestmodel3', u'Can view apptestmodel3')))

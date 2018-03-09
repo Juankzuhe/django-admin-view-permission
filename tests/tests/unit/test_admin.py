@@ -6,6 +6,9 @@ import pytest
 from django import forms
 from django.contrib import admin
 from django.contrib.admin import AdminSite
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
+from django.core.exceptions import PermissionDenied
 from django.test import (
     RequestFactory,
     SimpleTestCase,
@@ -1707,6 +1710,40 @@ class TestAdminViewPermissionModelAdmin(DataMixin, TestCase):
 
         assert response.status_code == status_code
         assert cl_formset(response.context_data['cl'].formset)
+
+
+class TestAdminViewPermissionUserAdmin(TestCase):
+    def setUp(self):
+        admin_site = AdminViewPermissionAdminSite('admin')
+        admin_site.register(get_user_model(), UserAdmin)
+        self.view = admin_site._registry[get_user_model()]
+        self.url = lambda pk: \
+            reverse('admin:auth_user_password_change', kwargs={'id': pk})
+
+    def test_user_change_password(self):
+        simple_user = create_simple_user('simple_user')
+        with self.assertRaises(PermissionDenied):
+            self.user_change_password(simple_user)
+        super_user = create_super_user('super_user')
+        self.assertIsNone(self.user_change_password(super_user))
+
+    def user_change_password(self, user):
+        request = RequestFactory().get(self.url(user.id))
+        request.user = user
+        self.view.user_change_password(request, str(user.id))
+
+    def test_get_form(self):
+        super_user = create_super_user('super_user')
+        super_text = self.form_password_help_text(super_user)
+        simple_user = create_simple_user('simple_user')
+        simple_text = self.form_password_help_text(simple_user)
+        self.assertNotEqual(super_text, simple_text)
+
+    def form_password_help_text(self, user):
+        request = RequestFactory().get(self.url(user.id))
+        request.user = user
+        form = self.view.get_form(request, user)
+        return form.base_fields['password'].help_text
 
 
 class TestAdminViewPermissionAdminSite(SimpleTestCase):
